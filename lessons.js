@@ -85,7 +85,7 @@ const lessons = [
         description: "Aware About old Generation!",
         price: 600,
         availableInventory: 5,
-        image: "./static/Images/history.png",
+        image: "./static/Images/History.png",
         alt: "History Lesson",
         location: "California" ,// New location property
         rating: 3 // New rating property
@@ -96,8 +96,8 @@ const lessons = [
         description: "Aware About Socitey!",
         price: 800,
         availableInventory: 5,
-        image: "Images/social-media.png",
-        alt: "./static/Social Studies",
+        image: "./static/Images/social-media.png",
+        alt: "Social Studies",
         location: "Chicago" ,// New location property
         rating: 3 // New rating property
     },
