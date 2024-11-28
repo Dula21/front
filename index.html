@@ -100,6 +100,7 @@
                     <p>
                         <strong>Type:</strong>
                     </p>
+                    ```html
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <input type="radio" id="student" value="Student" v-model="order.type" required />
                         <label for="student">Student</label>
@@ -128,37 +129,9 @@
             </div>
         </main>
     </div>
-    <script>
-        let store = new Vue({
-            el: '#store',
-            data: {
-                lessons: [],  // Array for lessons
-                orders: []    // Array for orders
-            },
-            created: function () {
-                console.log('Requesting data from server...');
-
-                // Fetch lessons from the server
-                fetch('http://localhost:3000/lessons')
-                    .then(response => response.json())
-                    .then(data => {
-                        this.lessons = data; // Save lessons data to Vue instance
-                        console.log('Lessons fetched:', data);
-                    })
-                    .catch(error => console.error('Error fetching lessons:', error));
-
-                // Fetch orders from the server
-                fetch('http://localhost:3000/orders')
-                    .then(response => response.json())
-                    .then(data => {
-                        this.orders = data; // Save orders data to Vue instance
-                        console.log('Orders fetched:', data);
-                    })
-                    .catch(error => console.error('Error fetching orders:', error));
-            }
-        });
-    </script>
-    <script src="./static/lessons.js"></script>
     <script src="./static/app.js"></script>
+    <script src="./static/lessons.js"></script>
+    
+
 </body>
 </html>
