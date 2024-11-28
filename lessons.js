@@ -5,7 +5,7 @@ const lessons = [
         description: "Enhance your math skills!",
         price: 100,
         availableInventory: 5,
-        image: "Images/maths.png",
+        image: "./static/Images/maths.png",
         alt: "Math Lesson",
         location: "London" ,// New location property
         rating: 4 // New rating property
@@ -17,7 +17,7 @@ const lessons = [
         description: "Enhance your Arabic skills!",
         price: 130,
         availableInventory: 5,
-        image: "Images/arabic.png",
+        image: "./static/Images/arabic.png",
         alt: "arabic Lesson",
         location: "California" ,// New location property
         rating: 4 // New rating property
@@ -30,7 +30,7 @@ const lessons = [
     description: "Hands-on science experience.",
     price: 120,
     availableInventory: 6,
-    image: "Images/science.png",
+    image: "./static/Images/science.png",
     alt: "Physics",
     location: "Dubai" ,// New location property
     rating: 5 // New rating property
@@ -41,7 +41,7 @@ const lessons = [
         description: "Enhance your french skills!",
         price: 140,
         availableInventory: 5,
-        image: "Images/french.png",
+        image: "./static/Images/french.png",
         alt: "french Lesson",
         location: "Seattle" ,// New location property
         rating: 3 // New rating property
@@ -52,7 +52,7 @@ const lessons = [
         description: "Enhance your Chinese skills!",
         price: 150,
         availableInventory: 5,
-        image: "Images/chinese.png",
+        image: "./static/Images/chinese.png",
         alt: "french Lesson",
         location: "Chicago" ,// New location property
         rating: 3 // New rating property
@@ -63,7 +63,7 @@ const lessons = [
         description: "Enhance your bio skills!",
         price: 200,
         availableInventory: 5,
-        image: "Images/biology.png",
+        image: "./static/Images/biology.png",
         alt: "french Lesson",
         location: "Zurich" ,// New location property
         rating: 3 // New rating property
@@ -74,7 +74,7 @@ const lessons = [
         description: "Enhance your chemistry skills!",
         price: 400,
         availableInventory: 5,
-        image: "Images/chemistry.png",
+        image: "./static/Images/chemistry.png",
         alt: "french Lesson",
         location: "Seattle" ,// New location property
         rating: 3 // New rating property
@@ -85,7 +85,7 @@ const lessons = [
         description: "Aware About old Generation!",
         price: 600,
         availableInventory: 5,
-        image: "Images/history.png",
+        image: "./static/Images/history.png",
         alt: "History Lesson",
         location: "California" ,// New location property
         rating: 3 // New rating property
@@ -97,7 +97,7 @@ const lessons = [
         price: 800,
         availableInventory: 5,
         image: "Images/social-media.png",
-        alt: "Social Studies",
+        alt: "./static/Social Studies",
         location: "Chicago" ,// New location property
         rating: 3 // New rating property
     },
@@ -107,7 +107,7 @@ const lessons = [
         description: "Enhance your Trading skills!",
         price: 1100,
         availableInventory: 5,
-        image: "Images/trade.png",
+        image: "./static/Images/trade.png",
         alt: "french Lesson",
         location: "Dubai" ,// New location property
         rating: 3 // New rating property
