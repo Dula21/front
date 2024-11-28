@@ -4,7 +4,7 @@ new Vue({
         return {
             sitename: 'After School App',
             showLessons: true, // Toggle between lessons and checkout
-            lessons: lessons, // Use the lessons array from lessons.js
+            lessons: [], // Initialize lessons array
             order: {
                 firstName: '',
                 lastName: '',
@@ -125,5 +125,25 @@ new Vue({
         setSortOption(option) {
             this.sortOption = option; // Method to set sorting option
         }
+    },
+    created() {
+        console.log('Requesting data from server...');
+
+        // Fetch lessons from the server
+        fetch('http://localhost:3001/lessons')
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    this.lessons = data; // Save lessons data to Vue instance
+                    console.log('Lessons fetched:', data);
+                } else {
+                    console.error('Fetched data is not an array:', data);
+                    alert('Unexpected data format received. Please try again later.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching lessons:', error);
+                alert('Failed to load lessons. Please try again later.');
+            });
     }
 });
