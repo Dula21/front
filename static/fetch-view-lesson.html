@@ -37,7 +37,7 @@
     <div id="error-message" class="error" style="display: none;"></div>
 
     <script>
-        fetch('http://localhost:3001/collection/lessons')
+        fetch('http://localhost:3000/collection/lessons')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);

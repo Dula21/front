@@ -50,7 +50,7 @@
         const lessonId = 1; // Replace with dynamic value based on your app
 
         // Fetch the existing lesson details
-        fetch(`http://localhost:3001/collection/lessons/${lessonId}`)
+        fetch(`http://localhost:3000/collection/lessons/${lessonId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);

@@ -26,7 +26,7 @@ const lessons = [
     },
     {
     id: 3,
-    title: " Physics",
+    title: "Physics",
     description: "Hands-on science experience.",
     price: 120,
     availableInventory: 6,
