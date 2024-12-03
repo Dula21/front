@@ -130,7 +130,7 @@ new Vue({
         console.log('Requesting data from server...');
 
         // Fetch lessons from the server
-        fetch('http://localhost:3000/lessons')
+        fetch('http://localhost:3000/collection/lessons')
             .then(response => response.json())
             .then(data => {
                 if (Array.isArray(data)) {
