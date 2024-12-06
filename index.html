@@ -22,27 +22,55 @@
         <main>
             <div class="controls-container">
                 <!-- Search Input Section -->
-    <div class="search-container">
-        <label for="search">Search Lessons:</label>
-        <input
-          type="text"
-          id="search"
-          v-model="query"
-          @input="searchLessons"
-          placeholder="Search by title, description, or location"
-        />
-        <!-- Results Section -->
-    <ul class="results-list">
-        <li v-for="result in results" :key="result._id">
-          <h2>{{ result.title }}</h2>
-          <p>{{ result.description }}</p>
-          <p><strong>Location:</strong> {{ result.location }}</p>
-        </li>
-        <li v-if="results.length === 0 && query.length > 0">
-          No results found.
-        </li>
-      </ul>
-      </div>
+    <!-- Search Input Section -->
+<div class="search-container">
+    <label for="search">Search Lessons:</label>
+    <input
+      type="text"
+      id="search"
+      v-model="query"
+      @input="searchLessons"
+      placeholder="Search by title, description, or location"
+    />
+</div>
+
+<!-- Results Section -->
+<div class="results-gallery">
+    <div v-for="result in results" :key="result._id" class="lessons-card">
+        <!-- Display the Lesson Image -->
+        <img :src="result.image" alt="Lesson Image" class="lessons-image" />
+
+        <!-- Lesson Title -->
+        <h2>{{ result.title }}</h2>
+        
+        <!-- Lesson Description -->
+        <p>{{ result.description }}</p>
+
+        <!-- Location -->
+        <p><strong>Location:</strong> {{ result.location }}</p>
+
+        <!-- Price -->
+        <p><strong>Price:</strong> ${{ result.price }}</p>
+
+        <!-- Availability -->
+        <p><strong>Available Inventory:</strong> {{ result.availableInventory }} left</p>
+
+        <!-- Add to Cart Button -->
+        <button
+          v-on:click="addToCart(result)"
+          v-if="result.availableInventory > 0"
+        >
+          Add to Cart
+        </button>
+        <p v-else>Out of Stock</p>
+    </div>
+
+    <!-- No Results Found Message -->
+    <div v-if="results.length === 0 && query.length > 0">
+        <p>No results found.</p>
+    </div>
+</div>
+
 
                 <div class="sorting-container">
                     <label for="sort">Sort by:</label>
