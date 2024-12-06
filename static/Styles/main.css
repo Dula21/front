@@ -184,31 +184,75 @@ ul li {
     margin-bottom: 20px; /* Space below the controls */
 }
 
-/* Styles for the search container */
+/* General Container */
 .search-container {
-    margin-right: 20px; /* Space between search and sort */
-    position: relative; /* For positioning the search icon */
-}
-
-.search-container label {
-    margin-right: 5px; /* Space between label and input */
-    font-weight: bold; /* Bold label */
-}
-
-/* Styles for the search input */
-.search-container input {
-    padding: 10px 40px 10px 10px; /* Padding for input */
-    border: 1px solid #007BFF; /* Border color */
-    border-radius: 25px; /* Rounded corners */
-    transition: border-color 0.3s ease; /* Smooth transition for border color */
-    font-size: 16px; /* Font size */
-}
-
-/* Change border color on focus */
-.search-container input:focus {
-    border-color: #0056b3; /* Darker blue on focus */
-    outline: none; /* Remove default outline */
-}
+    margin: 20px 0;
+    text-align: center;
+  }
+  
+  /* Label Styling */
+  .search-container label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  /* Search Input Styling */
+  .search-container input {
+    width: 60%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  /* Focus Effect on Input */
+  .search-container input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Results List Styling */
+  .results-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+  }
+  
+  /* Individual Result Items */
+  .results-list li {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 10px 0;
+    padding: 15px;
+    background-color: #f9f9f9;
+    transition: box-shadow 0.2s ease;
+  }
+  
+  /* Hover Effect for Results */
+  .results-list li:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Title Styling */
+  .results-list h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  /* Description Styling */
+  .results-list p {
+    font-size: 14px;
+    color: #666;
+    margin: 5px 0;
+  }
+  
+  /* Highlighted Location Text */
+  .results-list p strong {
+    color: #007bff;
+  }
 
 /* Styles for the sorting container */
 .sorting-container {
@@ -244,18 +288,7 @@ ul li {
     border-color: #0056b3; /* Darker blue on hover */
 }
 
-/* Optional: Add a search icon */
-.search-container::before {
-    content: "\f002"; /* Font Awesome search icon */
-    font-family: "Font Awesome 5 Free"; /* Font Awesome family */
-    font-weight: 900; /* Solid style */
-    position: absolute; /* Positioning */
-    left: 10px; /* Position from the left */
-    top: 50%; /* Center vertically */
-    transform: translateY(-50%); /* Adjust for vertical centering */
-    color: #007BFF; /* Icon color */
-    pointer-events: none; /* Prevent interaction */
-}
+
 .lesson-gallery {
     display: grid; /* Use grid layout for the gallery */
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive columns */
