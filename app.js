@@ -17,6 +17,9 @@ new Vue({
             cart: [], // Array to hold cart items
             sortOption: 'title', // Default sort option
             searchQuery: '', // Search query
+            isLoading: false, // Loading state
+            query: "", // User's search input
+            results: [], // Results fetched from the Back-End
             states: [ // List of states for dropdown
                 'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
                 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
@@ -32,25 +35,13 @@ new Vue({
         cartItemCount() {
             return this.cart.reduce((total, item) => total + item.quantity, 0);
         },
-        filteredLessons() {
-            if (!this.searchQuery) {
-                return this.sortedLessons; // Return all lessons if no search query
-            }
-            const query = this.searchQuery.toLowerCase();
-            return this.sortedLessons.filter(lesson => {
-                return (
-                    lesson.title.toLowerCase().includes(query) ||
-                    lesson.description.toLowerCase().includes(query) ||
-                    lesson.location.toLowerCase().includes(query)
-                );
-            });
-        },
+    
         sortedLessons() {
             const sorted = [...this.lessons]; // Create a copy of the lessons array
             if (this.sortOption === 'price') {
-                return sorted.sort((a, b) => a.price - b.price); // Sort by price ascending
+                return sorted.sort((a, b) => (a.price || 0) - (b.price || 0)); // Sort by price ascending
             } else if (this.sortOption === 'price_desc') {
-                return sorted.sort((a, b) => b.price - a.price); // Sort by price descending
+                return sorted.sort((a, b) => (b.price || 0) - (a.price || 0)); // Sort by price descending
             } else if (this.sortOption === 'title') {
                 return sorted.sort((a, b) => a.title.localeCompare(b.title)); // Sort by title A-Z
             } else if (this.sortOption === 'title_desc') {
@@ -58,7 +49,7 @@ new Vue({
             } else if (this.sortOption === 'location') {
                 return sorted.sort((a, b) => a.location.localeCompare(b.location)); // Sort by location
             } else if (this.sortOption === 'availability') {
-                return sorted.sort((a, b) => a.availableInventory - b.availableInventory); // Sort by availability
+                return sorted.sort((a, b) => (a.availableInventory || 0) - (b.availableInventory || 0)); // Sort by availability
             }
             return sorted; // Default return
         }
@@ -67,6 +58,26 @@ new Vue({
         toggleCheckout() {
             this.showLessons = !this.showLessons;
         },
+                // Fetch search results from the Back-End
+                async searchLessons() {
+                    if (!this.query.trim()) {
+                    this.results = []; // Clear results if the query is empty
+                    return;
+                    }
+
+                    try {
+                    // Send fetch request to the Back-End
+                    const response = await fetch(`http://localhost:3000/search?q=${encodeURIComponent(this.query)}`);
+
+                    const data = await response.json();
+
+                    // Update results with the filtered data
+                    this.results = data.results;
+                    } catch (error) {
+                    console.error("Error fetching search results:", error);
+                    }
+                },
+
         addToCart(lesson) {
             if (this.canAddToCart(lesson)) {
                 const existingItem = this.cart.find(item => item.id === lesson.id);
@@ -90,19 +101,25 @@ new Vue({
                 alert("Please fill out all required fields before submitting the order.");
                 return;
             }
-        
+
             // Check if the ZIP code is numerical
-            if (!/^\d+$/.test(this.order.zip)) {
-                alert("Please enter a valid ZIP code (numbers only).");
+            if (!/^\d{5}(-\d{4})?$/.test(this.order.zip)) {
+                alert("Please enter a valid ZIP code (5 digits or 5+4 format).");
                 return;
             }
-        
+
+            // Validate state selection
+            if (!this.states.includes(this.order.state)) {
+                alert("Please select a valid state.");
+                return;
+            }
+
             // Ensure the cart is not empty
             if (!this.cart.length) {
                 alert("Your cart is empty. Add an item before placing an order.");
                 return;
             }
-        
+
             // Prepare the order data
             const orderData = {
                 lessons: this.cart.map(item => ({
@@ -119,7 +136,8 @@ new Vue({
                     type: this.order.type,
                 },
             };
-        
+
+            this.isLoading = true;
             try {
                 // Send the order data to the backend API
                 const orderResponse = await fetch('http://localhost:3000/collection/orders', {
@@ -129,20 +147,20 @@ new Vue({
                     },
                     body: JSON.stringify(orderData),
                 });
-        
+
                 if (!orderResponse.ok) {
                     const errorText = await orderResponse.text();
                     const errorMessage = this.parseErrorMessage(errorText, 'Failed to place the order.');
                     throw new Error(errorMessage);
                 }
-        
+
                 const orderResult = await orderResponse.json();
                 console.log('Order placed successfully:', orderResult);
-        
+
                 // Update inventory for each lesson in the cart
                 for (const item of this.cart) {
                     const lessonId = item._id || item.id;
-        
+
                     const inventoryResponse = await fetch(`http://localhost:3000/collection/lessons/${lessonId}`, {
                         method: 'PUT',
                         headers: {
@@ -150,7 +168,7 @@ new Vue({
                         },
                         body: JSON.stringify({ availableInventory: item.availableInventory }),
                     });
-        
+
                     if (!inventoryResponse.ok) {
                         const errorText = await inventoryResponse.text();
                         const errorMessage = this.parseErrorMessage(
@@ -159,11 +177,11 @@ new Vue({
                         );
                         throw new Error(errorMessage);
                     }
-        
+
                     const inventoryResult = await inventoryResponse.json();
                     console.log(`Inventory updated for lesson ${lessonId}:`, inventoryResult);
                 }
-        
+
                 // Clear the order form fields and cart
                 this.order = {
                     firstName: '',
@@ -176,16 +194,18 @@ new Vue({
                 };
                 this.cart = [];
                 this.showLessons = true;
-        
+
                 // Show success message
                 alert(orderResult.message || 'Order placed successfully!');
-        
+
             } catch (error) {
                 console.error('Error submitting order:', error);
                 alert(error.message || 'Failed to place the order. Please try again later.');
+            } finally {
+                this.isLoading = false;
             }
         },
-        
+
         parseErrorMessage(responseText, defaultMessage) {
             try {
                 const errorData = JSON.parse(responseText);
@@ -194,64 +214,38 @@ new Vue({
                 return responseText || defaultMessage;
             }
         },
-        
-        updateAvailableInventory() {
-            this.cart.forEach(item => {
-                const lessonId = item._id || item.id; // Use the MongoDB ObjectId if available
-        
-                fetch(`http://localhost:3000/collection/lessons/${lessonId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ availableInventory: item.availableInventory }),
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Failed to update inventory for lesson ${lessonId}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(`Inventory updated for lesson ${lessonId}:`, data);
-                })
-                .catch(error => {
-                    console.error(`Error updating inventory for lesson ${lessonId}:`, error);
-                });
-            });
-        },
-        
+
         cartCount(lessonId) {
-            let count = 0;
-            for (let i = 0; i < this.cart.length; i++) {
-                if (this.cart[i].id === lessonId) {
-                    count++;
-                }
-            }
-            return count;
+            const item = this.cart.find(item => item.id === lessonId);
+            return item ? item.quantity : 0;
         },
         setSortOption(option) {
             this.sortOption = option; // Method to set sorting option
         },
+        async fetchLessons() {
+            console.log('Requesting data from server...');
+            this.isLoading = true;
+
+            try {
+                const response = await fetch('http://localhost:3000/collection/lessons');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch lessons. Server returned an error.');
+                }
+                const data = await response.json();
+                if (!Array.isArray(data)) {
+                    throw new Error('Unexpected response format. Expected an array.');
+                }
+                this.lessons = data;
+                console.log('Lessons fetched:', data);
+            } catch (error) { 
+                console.error('Error fetching lessons:', error);
+                alert(error.message || 'Failed to load lessons. Please try again later.');
+            } finally {
+                this.isLoading = false;
+            }
+        }
     },
     created() {
-        console.log('Requesting data from server...');
-
-        // Fetch lessons from the server
-        fetch('http://localhost:3000/collection/lessons')
-            .then(response => response.json())
-            .then(data => {
-                if (Array.isArray(data)) {
-                    this.lessons = data; // Save lessons data to Vue instance
-                    console.log('Lessons fetched:', data);
-                } else {
-                    console.error('Fetched data is not an array:', data);
-                    alert('Unexpected data format received. Please try again later.');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching lessons:', error);
-                alert('Failed to load lessons. Please try again later.');
-            });
+        this.fetchLessons();
     }
 });
