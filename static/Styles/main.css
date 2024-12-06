@@ -188,71 +188,153 @@ ul li {
 .search-container {
     margin: 20px 0;
     text-align: center;
-  }
-  
-  /* Label Styling */
-  .search-container label {
+}
+
+/* Label Styling */
+.search-container label {
     font-size: 16px;
     font-weight: bold;
     margin-right: 10px;
-  }
-  
-  /* Search Input Styling */
-  .search-container input {
+}
+
+/* Search Input Styling */
+.search-container input {
     width: 60%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
-  }
-  
-  /* Focus Effect on Input */
-  .search-container input:focus {
+}
+
+/* Focus Effect on Input */
+.search-container input:focus {
     border-color: #007bff;
     outline: none;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-  
-  /* Results List Styling */
-  .results-list {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0;
-  }
-  
-  /* Individual Result Items */
-  .results-list li {
+}
+
+/* Results Gallery Styling (Cards layout) */
+.results-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Individual Lesson Card Styling */
+.lessons-card {
+    width: 70%;
     border: 1px solid #ddd;
-    border-radius: 5px;
-    margin: 10px 0;
+    border-radius: 10px;
     padding: 15px;
     background-color: #f9f9f9;
-    transition: box-shadow 0.2s ease;
-  }
-  
-  /* Hover Effect for Results */
-  .results-list li:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Title Styling */
-  .results-list h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.lessons-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Lesson Image Styling */
+.lessons-image {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+/* Lesson Title Styling */
+.lessons-card h2 {
+    font-size: 18px;
+    margin: 10px 0;
     color: #333;
-  }
-  
-  /* Description Styling */
-  .results-list p {
+}
+
+/* Description Styling */
+.lessons-card p {
     font-size: 14px;
     color: #666;
     margin: 5px 0;
-  }
-  
-  /* Highlighted Location Text */
-  .results-list p strong {
-    color: #007bff;
-  }
+}
+
+/* Add to Cart Button Styling */
+.lessons-card button {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.lessons-card button:hover {
+    background-color: #218838;
+}
+
+.lessons-card p {
+    margin-top: 10px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    /* Search Input */
+    .search-container input {
+        width: 80%;
+    }
+
+    /* Results Gallery */
+    .results-gallery {
+        justify-content: center;
+    }
+
+    /* Lesson Card */
+    .lessons-card {
+        width: 100%; /* Make the cards full width */
+        margin-bottom: 20px;
+    }
+}
+
+/* Tablet Responsiveness */
+@media (max-width: 1024px) {
+    /* Search Input */
+    .search-container input {
+        width: 70%;
+    }
+
+    /* Results Gallery */
+    .results-gallery {
+        justify-content: space-between;
+    }
+
+    /* Lesson Card */
+    .lessons-card {
+        width: 45%; /* Two cards per row */
+    }
+}
+
+/* Desktop Responsiveness */
+@media (min-width: 1025px) {
+    /* Search Input */
+    .search-container input {
+        width: 60%;
+    }
+
+    /* Results Gallery */
+    .results-gallery {
+        justify-content: space-between;
+    }
+
+    /* Lesson Card */
+    .lessons-card {
+        width: 30%; /* Three cards per row */
+    }
+}
+
 
 /* Styles for the sorting container */
 .sorting-container {
