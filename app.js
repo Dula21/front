@@ -16,6 +16,7 @@ new Vue({
             },
             cart: [], // Array to hold cart items
             sortOption: 'title', // Default sort option
+            
             searchQuery: '', // Search query
             isLoading: false, // Loading state
             query: "", // User's search input
@@ -35,30 +36,72 @@ new Vue({
         cartItemCount() {
             return this.cart.reduce((total, item) => total + item.quantity, 0);
         },
-    
-        sortedLessons() {
-            const sorted = [...this.lessons]; // Create a copy of the lessons array
-            if (this.sortOption === 'price') {
-                return sorted.sort((a, b) => (a.price || 0) - (b.price || 0)); // Sort by price ascending
-            } else if (this.sortOption === 'price_desc') {
-                return sorted.sort((a, b) => (b.price || 0) - (a.price || 0)); // Sort by price descending
-            } else if (this.sortOption === 'title') {
-                return sorted.sort((a, b) => a.title.localeCompare(b.title)); // Sort by title A-Z
-            } else if (this.sortOption === 'title_desc') {
-                return sorted.sort((a, b) => b.title.localeCompare(a.title)); // Sort by title Z-A
-            } else if (this.sortOption === 'location') {
-                return sorted.sort((a, b) => a.location.localeCompare(b.location)); // Sort by location
-            } else if (this.sortOption === 'availability') {
-                return sorted.sort((a, b) => (a.availableInventory || 0) - (b.availableInventory || 0)); // Sort by availability
-            }
-            return sorted; // Default return
-        }
     },
     methods: {
+        remainingStock(lessonId) {
+            const lesson = this.lessons.find(lesson => lesson.id === lessonId);
+            if (!lesson) return 0;
+            return lesson.availableInventory - this.cartCount(lessonId);
+        },
+
+        canAddToCart(lesson) {
+            return lesson.availableInventory > this.cartCount(lesson.id); // Check if item can be added
+        },
+        cartCount(lessonId) {
+            const item = this.cart.find(item => item.id === lessonId);
+            return item ? item.quantity : 0; // Return the count of the item in the cart or 0
+        },
+    
+        setSortOption(option) {
+            this.sortOption = option; // Set the sorting option
+        },
+    
+        // Add to Cart Method
+    addToCart(lesson) {
+        if (lesson.availableInventory > 0) {
+            const existingItem = this.cart.find(item => item.id === lesson.id);
+
+            if (existingItem) {
+                existingItem.quantity++; // Increment quantity if item already exists in cart
+            } else {
+                this.cart.push({ id: lesson.id, quantity: 1 }); // Add new item to cart
+            }
+
+            lesson.availableInventory--; // Decrease available inventory
+        } else {
+            alert("Cannot add more items to the cart. Out of stock!");
+        }
+    },
+    
+        updateInventory(lessonId, change) {
+            // Update the inventory for a specific lesson
+            const lesson = this.lessons.find(item => item.id === lessonId);
+            if (lesson) {
+                lesson.availableInventory += change; // Increment or decrement inventory
+            }
+        },
+        
         toggleCheckout() {
             this.showLessons = !this.showLessons;
         },
-                // Fetch search results from the Back-End
+        sortLessons() {
+            const sorted = [...this.lessons]; // Create a copy of the lessons array
+            if (this.sortOption === 'price') {
+              this.lessons = sorted.sort((a, b) => (a.price || 0) - (b.price || 0)); // Sort by price ascending
+            } else if (this.sortOption === 'price_desc') {
+              this.lessons = sorted.sort((a, b) => (b.price || 0) - (a.price || 0)); // Sort by price descending
+            } else if (this.sortOption === 'title') {
+              this.lessons = sorted.sort((a, b) => a.title.localeCompare(b.title)); // Sort by title A-Z
+            } else if (this.sortOption === 'title_desc') {
+              this.lessons = sorted.sort((a, b) => b.title.localeCompare(a.title)); // Sort by title Z-A
+            } else if (this.sortOption === 'location') {
+              this.lessons = sorted.sort((a, b) => a.location.localeCompare(b.location)); // Sort by location
+            } else if (this.sortOption === 'availability') {
+              this.lessons = sorted.sort((a, b) => (a.availableInventory || 0) - (b.availableInventory || 0)); // Sort by availability
+            }
+          },
+        
+        // Fetch search results from the Back-End
                 async searchLessons() {
                     if (!this.query.trim()) {
                     this.results = []; // Clear results if the query is empty
@@ -78,22 +121,7 @@ new Vue({
                     }
                 },
 
-        addToCart(lesson) {
-            if (this.canAddToCart(lesson)) {
-                const existingItem = this.cart.find(item => item.id === lesson.id);
-                if (existingItem) {
-                    existingItem.quantity++;
-                } else {
-                    this.cart.push({ ...lesson, quantity: 1 });
-                }
-                lesson.availableInventory--; // Decrement available inventory
-            } else {
-                alert("Cannot add more items to the cart. Out of stock!");
-            }
-        },
-        canAddToCart(lesson) {
-            return lesson.availableInventory > this.cartCount(lesson.id);
-        },
+        
         async submitOrder() {
             // Validate all input fields
             if (!this.order.firstName || !this.order.lastName || !this.order.address ||
@@ -157,7 +185,7 @@ new Vue({
                 const orderResult = await orderResponse.json();
                 console.log('Order placed successfully:', orderResult);
 
-                // Update inventory for each lesson in the cart
+        // Update inventory for each lesson in the cart
                 for (const item of this.cart) {
                     const lessonId = item._id || item.id;
 
@@ -215,13 +243,7 @@ new Vue({
             }
         },
 
-        cartCount(lessonId) {
-            const item = this.cart.find(item => item.id === lessonId);
-            return item ? item.quantity : 0;
-        },
-        setSortOption(option) {
-            this.sortOption = option; // Method to set sorting option
-        },
+        
         async fetchLessons() {
             console.log('Requesting data from server...');
             this.isLoading = true;
