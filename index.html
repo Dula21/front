@@ -20,22 +20,33 @@
         </header>
 
         <main>
-            <div class="controls-container">
+<div class="search-sorting-container">
+                                   
                 <!-- Search Input Section -->
-    <!-- Search Input Section -->
-<div class="search-container">
-    <label for="search">Search Lessons:</label>
-    <input
-      type="text"
-      id="search"
-      v-model="query"
-      @input="searchLessons"
-      placeholder="Search by title, description, or location"
-    />
-</div>
-
-<!-- Results Section -->
-<div class="results-gallery">
+            <div class="search-container">
+                <label for="search">Search Lessons:</label>
+                <input
+                type="text"
+                id="search"
+                v-model="query"
+                @input="searchLessons"
+                placeholder="Search by title, description, or location"
+                />
+            </div>
+        <!-- Sorting container -->
+                <div class="sorting-container">
+                    <label for="sort">Sort by:</label>
+                    <select v-model="sortOption" @change="sortLessons">
+                    <option value="title">Name (A-Z)</option>
+                    <option value="title_desc">Name (Z-A)</option>
+                    <option value="price">Price (Low to High)</option>
+                    <option value="price_desc">Price (High to Low)</option>
+                    <option value="location">Location</option>
+                    <option value="availability">Availability</option>
+                </div>
+ </div>
+ <!-- Results Section -->
+ <div class="results-gallery">
     <div v-for="result in results" :key="result._id" class="lessons-card">
         <!-- Display the Lesson Image -->
         <img :src="result.image" alt="Lesson Image" class="lessons-image" />
@@ -57,10 +68,9 @@
 
         <!-- Add to Cart Button -->
         <button
-          v-on:click="addToCart(result)"
-          v-if="result.availableInventory > 0"
-        >
-          Add to Cart
+        v-on:click="addToCart(result)"
+        v-if="result.availableInventory > 0">
+        Add to Cart
         </button>
         <p v-else>Out of Stock</p>
     </div>
@@ -71,23 +81,10 @@
     </div>
 </div>
 
-
-                <div class="sorting-container">
-                    <label for="sort">Sort by:</label>
-                    <select v-model="sortOption" @change="sortedLessons">
-                        <option value="title">Name (A-Z)</option>
-                        <option value="title_desc">Name (Z-A)</option>
-                        <option value="price">Price (Low to High)</option>
-                        <option value="price_desc">Price (High to Low)</option>
-                        <option value="location">Location</option>
-                        <option value="availability">Availability</option>
-                    </select>
-                </div>
-            </div>
-
-            <div v-if="showLessons">
-                <div class="lesson-gallery">
-                    <div v-for="lesson in lessons" :key="lesson.id" class="lesson-card">
+          <!--Showing Lessons-->
+    <div v-if="showLessons">
+         <div class="lesson-gallery">
+             <div v-for="lesson in lessons" :key="lesson.id" class="lesson-card">
                         <figure>
                             <img v-bind:src="lesson.image" :alt="lesson.alt">
                         </figure>
@@ -95,26 +92,31 @@
                         <p>{{ lesson.description }}</p>
                         <p>Location: {{ lesson.location }}</p>
                         <p>Price: ${{ lesson.price }}</p>
-                        <p>Available: {{ lesson.availableInventory }}</p>
-                        
-                        <div>
+                        <p>Available: {{ lesson.availableInventory }}</p> 
+                    <div>
                             <span v-for="n in Math.min(lesson.rating, 5)" :key="'filled-' + n">★</span>
                             <span v-for="n in Math.max(0, 5 - lesson.rating)" :key="'empty-' + n">☆</span>
-                        </div>
+                    </div> 
+                    <div>
+                        <!-- Add to Cart Button -->
+                        <button v-on:click="addToCart(lesson)" v-if="lesson.availableInventory > 0">Add to Cart</button>
+                        <button disabled="disabled" v-else>Out Of Stock!!</button>
+                    
+                        <!-- Inventory Display -->
                         
-                        <div>
-                            <button v-on:click="addToCart(lesson)" v-if="canAddToCart(lesson)">Add to Cart</button>
-                            <button disabled="disabled" v-else> Out Of Stock!!</button>
-                            <span v-if="lesson.availableInventory === cartCount(lesson.id)">All out!</span>
-                            <span v-else-if="lesson.availableInventory - cartCount(lesson.id) < 5">
-                                Only {{ lesson.availableInventory - cartCount(lesson.id) }} left!
-                            </span>
-                            <span v-else>Buy Now!</span>
-                        </div>
+                        <span>Only {{ lesson.availableInventory }} left!</span>
                     </div>
-                </div>
+                    
+                    
+                    
+                    
+                    
+                    
             </div>
+        </div>
+    </div>
 
+<!--Order And checkout Form-->
             <div v-else>
                 <div class="checkout-form">
                     <h2>Checkout</h2>
