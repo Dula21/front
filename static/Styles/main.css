@@ -178,10 +178,19 @@ ul li {
 }
 
 /* General styles for the controls container */
-.controls-container {
-    display: flex;
-    justify-content: flex-end; /* Aligns items to the right */
-    margin-bottom: 20px; /* Space below the controls */
+.search-sorting-container {
+    display: flex; /* Arrange items horizontally */
+    justify-content: space-between; /* Push items to opposite ends */
+    align-items: center; /* Vertically align items */
+    width: 100%; /* Full width of the parent container */
+    margin-bottom: 10px; /* Space below the container */
+    position: sticky; /* Keep it in place when scrolling */
+    top: 0; /* Sticks to the top of the viewport */
+    z-index: 10; /* Ensures it stays above other content */
+    background-color: #fff; /* Background to avoid overlap with content */
+    padding: 10px; /* Add some padding for better appearance */
+    border-bottom: 1px solid #ddd; /* Optional: Add a divider line */
+    border-radius: 10px;
 }
 
 /* General Container */
@@ -224,7 +233,7 @@ ul li {
 
 /* Individual Lesson Card Styling */
 .lessons-card {
-    width: 70%;
+    width: 30%;
     border: 1px solid #ddd;
     border-radius: 10px;
     padding: 15px;
@@ -336,15 +345,21 @@ ul li {
 }
 
 
-/* Styles for the sorting container */
+
+
+/* Keep the sorting container on the right side */
 .sorting-container {
-    display: flex;
+    display: fixed;
     align-items: center; /* Aligns label and select vertically */
+    position: relative; /* Keeps it in its place */
+    margin-left: auto; /* Pushes the sorting container to the far right */
 }
 
+/* Styles for the label inside the sorting container */
 .sorting-container label {
     margin-right: 5px; /* Space between label and select */
     font-weight: bold; /* Bold label */
+    color: #333; /* Darker label color for readability */
 }
 
 /* Styles for the sorting select */
@@ -368,6 +383,19 @@ ul li {
 .search-container input:hover,
 .sorting-container select:hover {
     border-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Keep the search and sorting components responsive */
+@media (max-width: 768px) {
+    .search-sorting-container {
+        flex-direction: column; /* Stack items vertically on smaller screens */
+        align-items: flex-start; /* Align items to the left */
+    }
+    
+    .sorting-container {
+        margin-left: 0; /* Remove auto margin in smaller viewports */
+        margin-top: 10px; /* Add space above the sorting container */
+    }
 }
 
 
