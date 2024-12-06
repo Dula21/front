@@ -21,13 +21,32 @@
 
         <main>
             <div class="controls-container">
-                <div class="search-container">
-                    <label for="search">Search Lessons:</label>
-                    <input type="text" id="search" v-model="searchQuery" placeholder="Search by title or description or location" />
-                </div>
+                <!-- Search Input Section -->
+    <div class="search-container">
+        <label for="search">Search Lessons:</label>
+        <input
+          type="text"
+          id="search"
+          v-model="query"
+          @input="searchLessons"
+          placeholder="Search by title, description, or location"
+        />
+        <!-- Results Section -->
+    <ul class="results-list">
+        <li v-for="result in results" :key="result._id">
+          <h2>{{ result.title }}</h2>
+          <p>{{ result.description }}</p>
+          <p><strong>Location:</strong> {{ result.location }}</p>
+        </li>
+        <li v-if="results.length === 0 && query.length > 0">
+          No results found.
+        </li>
+      </ul>
+      </div>
+
                 <div class="sorting-container">
                     <label for="sort">Sort by:</label>
-                    <select v-model="sortOption" @change="setSortOption(sortOption)">
+                    <select v-model="sortOption" @change="sortedLessons">
                         <option value="title">Name (A-Z)</option>
                         <option value="title_desc">Name (Z-A)</option>
                         <option value="price">Price (Low to High)</option>
@@ -37,9 +56,10 @@
                     </select>
                 </div>
             </div>
+
             <div v-if="showLessons">
                 <div class="lesson-gallery">
-                    <div v-for="lesson in filteredLessons" :key="lesson.id" class="lesson-card">
+                    <div v-for="lesson in lessons" :key="lesson.id" class="lesson-card">
                         <figure>
                             <img v-bind:src="lesson.image" :alt="lesson.alt">
                         </figure>
@@ -97,7 +117,8 @@
                             <option disabled value="">Select a state</option>
                             <option v-for="state in states" :key="state" :value="state">{{ state }}</option>
                         </select>
- </p>
+                    </p>
+
                     <p>
                         <strong>Type:</strong>
                     </p>
@@ -132,4 +153,4 @@
     </div>
     <script src="app.js"></script>
 </body>
-</html> 
+</html>
