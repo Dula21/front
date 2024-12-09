@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,149 +21,95 @@
         </header>
 
         <main>
-<div class="search-sorting-container">
-                                   
+            <div class="search-sorting-container">
                 <!-- Search Input Section -->
-            <div class="search-container">
-                <label for="search">Search Lessons:</label>
-                <input
-                type="text"
-                id="search"
-                v-model="query"
-                @input="searchLessons"
-                placeholder="Search by title, description, or location"
-                />
-            </div>
-        <!-- Sorting container -->
+                <div class="search-container">
+                    <label for="search">Search Lessons:</label>
+                    <input type="text" id="search" v-model="query" @input="searchLessons" placeholder="Search by title, description, or location" />
+                </div>
+
+                <!-- Sorting Dropdown -->
                 <div class="sorting-container">
                     <label for="sort">Sort by:</label>
                     <select v-model="sortOption" @change="sortLessons">
-                    <option value="title">Name (A-Z)</option>
-                    <option value="title_desc">Name (Z-A)</option>
-                    <option value="price">Price (Low to High)</option>
-                    <option value="price_desc">Price (High to Low)</option>
-                    <option value="location">Location</option>
-                    <option value="availability">Availability</option>
+                        <option value="title">Name (A-Z)</option>
+                        <option value="title_desc">Name (Z-A)</option>
+                        <option value="price">Price (Low to High)</option>
+                        <option value="price_desc">Price (High to Low)</option>
+                        <option value="location">Location</option>
+                        <option value="availability">Availability</option>
+                    </select>
                 </div>
- </div>
- <!-- Results Section -->
- <div class="results-gallery">
-    <div v-for="result in results" :key="result._id" class="lessons-card">
-        <!-- Display the Lesson Image -->
-        <img :src="result.image" alt="Lesson Image" class="lessons-image" />
+            </div>
 
-        <!-- Lesson Title -->
-        <h2>{{ result.title }}</h2>
-        
-        <!-- Lesson Description -->
-        <p>{{ result.description }}</p>
+            <!-- Results Section -->
+            <div class="results-gallery">
+                <div v-for="result in results" :key="result._id" class="lessons-card">
+                    <img :src="result.image" alt="Lesson Image" class="lessons-image" />
+                    <h2>{{ result.title }}</h2>
+                    <p>{{ result.description }}</p>
+                    <p><strong>Location:</strong> {{ result.location }}</p>
+                    <p><strong>Price:</strong> ${{ result.price }}</p>
+                    <p><strong>Available Inventory:</strong> {{ result.availableInventory }} left</p>
+                    <button v-on:click="addToCart(result)" v-if="result.availableInventory > 0">Add to Cart</button>
+                    <p v-else>Out of Stock</p>
+                </div>
 
-        <!-- Location -->
-        <p><strong>Location:</strong> {{ result.location }}</p>
+                <!-- No Results Found Message -->
+                <div v-if="results.length === 0 && query.length > 0">
+                    <p>No results found.</p>
+                </div>
+            </div>
 
-        <!-- Price -->
-        <p><strong>Price:</strong> ${{ result.price }}</p>
-
-        <!-- Availability -->
-        <p><strong>Available Inventory:</strong> {{ result.availableInventory }} left</p>
-
-        <!-- Add to Cart Button -->
-        <button
-        v-on:click="addToCart(result)"
-        v-if="result.availableInventory > 0">
-        Add to Cart
-        </button>
-        <p v-else>Out of Stock</p>
-    </div>
-
-    <!-- No Results Found Message -->
-    <div v-if="results.length === 0 && query.length > 0">
-        <p>No results found.</p>
-    </div>
-</div>
-
-          <!--Showing Lessons-->
-    <div v-if="showLessons">
-         <div class="lesson-gallery">
-             <div v-for="lesson in lessons" :key="lesson.id" class="lesson-card">
+            <!-- Showing Lessons -->
+            <div v-if="showLessons">
+                <div class="lesson-gallery">
+                    <div v-for="lesson in lessons" :key="lesson.id" class="lesson-card">
                         <figure>
-                            <img v-bind:src="lesson.image" :alt="lesson.alt">
+                            <img :src="lesson.image" :alt="lesson.alt" />
                         </figure>
                         <h2>{{ lesson.title }}</h2>
                         <p>{{ lesson.description }}</p>
                         <p>Location: {{ lesson.location }}</p>
                         <p>Price: ${{ lesson.price }}</p>
-                        <p>Available: {{ lesson.availableInventory }}</p> 
-                    <div>
+                        <p>Available: {{ lesson.availableInventory }}</p>
+                        <div>
                             <span v-for="n in Math.min(lesson.rating, 5)" :key="'filled-' + n">★</span>
                             <span v-for="n in Math.max(0, 5 - lesson.rating)" :key="'empty-' + n">☆</span>
-                    </div> 
-                    <div>
-                        <!-- Add to Cart Button -->
+                        </div>
                         <button v-on:click="addToCart(lesson)" v-if="lesson.availableInventory > 0">Add to Cart</button>
-                        <button disabled="disabled" v-else>Out Of Stock!!</button>
-                    
-                        <!-- Inventory Display -->
-                        
-                        <span>Only {{ lesson.availableInventory }} left!</span>
+                        <button disabled v-else>Out Of Stock!!</button>
+                        <span v-if="lesson.availableInventory > 0">Only {{ lesson.availableInventory }} left!</span>
                     </div>
-                    
-                    
-                    
-                    
-                    
-                    
+                </div>
             </div>
-        </div>
-    </div>
 
-<!--Order And checkout Form-->
+            <!-- Order And Checkout Form -->
             <div v-else>
                 <div class="checkout-form">
                     <h2>Checkout</h2>
-                    <p>
-                        <strong>First Name:</strong>
-                        <input v-model.trim="order.firstName" required />
-                    </p>
-                    <p>
-                        <strong>Last Name:</strong>
-                        <input v-model.trim="order.lastName" required />
-                    </p>
-                    <p>
-                        <strong>Address:</strong>
-                        <input v-model.trim="order.address" required />
-                    </p>
-                    <p>
-                        <strong>City:</strong>
-                        <input v-model.trim="order.city" required />
-                    </p>
-                    <p>
-                        <strong>Zip Code:</strong>
-                        <input v-model.trim="order.zip" required />
-                    </p>
-                    
-                    <p>
-                        <strong>State:</strong>
+                    <p><strong>First Name:</strong> <input v-model.trim="order.firstName" required /></p>
+                    <p><strong>Last Name:</strong> <input v-model.trim="order.lastName" required /></p>
+                    <p><strong>Address:</strong> <input v-model.trim="order.address" required /></p>
+                    <p><strong>City:</strong> <input v-model.trim="order.city" required /></p>
+                    <p><strong>Zip Code:</strong> <input v-model.trim="order.zip" required /></p>
+                    <p><strong>State:</strong>
                         <select v-model="order.state" required>
                             <option disabled value="">Select a state</option>
                             <option v-for="state in states" :key="state" :value="state">{{ state }}</option>
                         </select>
                     </p>
-
-                    <p>
-                        <strong>Type:</strong>
-                    </p>
-                    
+                    <p><strong>Type:</strong></p>
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <input type="radio" id="student" value="Student" v-model="order.type" required />
                         <label for="student">Student</label>
                         <input type="radio" id="business" value="Business" v-model="order.type" required />
                         <label for="business">Business</label>
                     </div>
-                  
                     <button v-on:click="submitOrder">Place Order</button>
                 </div>
-            
+
+                <!-- Order Summary -->
                 <div v-if="order.firstName && order.lastName && order.address && order.city && order.zip && order.state && order.type" class="order-summary">
                     <h3>Order Summary</h3>
                     <p><strong>Name:</strong> {{ order.firstName }} {{ order.lastName }}</p>
@@ -181,6 +128,8 @@
             </div>
         </main>
     </div>
+
     <script src="app.js"></script>
 </body>
+
 </html>
